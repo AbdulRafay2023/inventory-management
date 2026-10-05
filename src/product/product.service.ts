@@ -2,13 +2,17 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
+import { ApiResponse } from './interfaces/api-response.interface';
+import { ProductResponse } from './interfaces/product-response.interface';
 
 @Injectable()
 export class ProductService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   //create a product
-  async createProduct(data: CreateProductDto) {
+  async createProduct(
+    data: CreateProductDto,
+  ): Promise<ApiResponse<ProductResponse>> {
     //check product with the same sku exists?
     const existingProduct = await this.databaseService.product.findUnique({
       where: {
@@ -20,9 +24,15 @@ export class ProductService {
       throw new ConflictException('Product with the same SKU already exists');
     }
 
-    return this.databaseService.product.create({
+    const product = await this.databaseService.product.create({
       data,
     });
+
+    return {
+      success: true,
+      message: 'Product created successfully',
+      data: product,
+    };
   }
 
   //get all products
