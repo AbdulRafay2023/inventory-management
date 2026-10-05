@@ -9,15 +9,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 model Product {
-  id    Int  @id @default(now())
-  name  String @unique
-  sku
-  price
-  quantity
-  createdAt
-  updatedAt
+  id          Int  @id @default(autoincrement())
+  name        String 
+  sku         String @unique
+  price       Int 
+  quantity    Int 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 } 
