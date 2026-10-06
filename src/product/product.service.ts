@@ -7,6 +7,7 @@ import { DatabaseService } from '../database/database.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductFormatInputType, ProductFormatResponseType } from './types';
+import { ApiResponseType } from './types/api-response.type';
 
 @Injectable()
 export class ProductService {
@@ -39,7 +40,9 @@ export class ProductService {
   }
 
   //get all products
-  async getAllProducts(): Promise<ProductFormatResponseType[]> {
+  async getAllProducts(): Promise<
+    ApiResponseType<ProductFormatResponseType[]>
+  > {
     try {
       const products = await this.databaseService.product.findMany({
         orderBy: {
@@ -47,7 +50,11 @@ export class ProductService {
         },
       });
 
-      return products;
+      return {
+        success: true,
+        message: 'product fetched successfully',
+        data: products,
+      };
     } catch (error) {
       this.logger.error(error);
       throw error;
