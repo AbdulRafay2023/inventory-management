@@ -18,4 +18,7 @@ export class CreateProductDto {
   @IsNotEmpty()
   @Min(0)
   quantity: number;
+
+  @IsInt()
+  categoryId: number;
 }

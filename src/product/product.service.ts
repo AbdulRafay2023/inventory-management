@@ -3,21 +3,24 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
 import { DatabaseService } from '../database/database.service';
-import { CreateProductDto } from '../dto/create-product.dto';
-import { UpdateProductDto } from '../dto/update-product.dto';
-import { ProductFormatInputType, ProductFormatResponseType } from './types';
+
+import { ProductFormatResponseType } from './types';
 import { ApiResponseType } from './types/api-response.type';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
-  logger: any;
   constructor(private readonly databaseService: DatabaseService) {}
 
-  //create a product
-  async createProduct(data: CreateProductDto): Promise<ProductFormatInputType> {
-    //check product with the same sku exists?
+  // Create a product
+  async createProduct(
+    data: CreateProductDto,
+  ): Promise<ApiResponseType<ProductFormatResponseType>> {
     try {
+      // Check if SKU already exists
       const existingProduct = await this.databaseService.product.findUnique({
         where: {
           sku: data.sku,
@@ -29,22 +32,56 @@ export class ProductService {
       }
 
       const product = await this.databaseService.product.create({
-        data,
+        data: {
+          name: data.name,
+          sku: data.sku,
+          price: data.price,
+          quantity: data.quantity,
+          category_id: data.categoryId,
+        },
+        include: {
+          category: {
+            select: {
+              name: true,
+            },
+          },
+          supplier: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
 
-      return product;
+      return {
+        success: true,
+        message: 'Product created successfully',
+        data: product,
+      };
     } catch (error) {
-      this.logger.error(error);
+      console.error(error);
       throw error;
     }
   }
 
-  //get all products
+  // Get all products
   async getAllProducts(): Promise<
     ApiResponseType<ProductFormatResponseType[]>
   > {
     try {
       const products = await this.databaseService.product.findMany({
+        include: {
+          category: {
+            select: {
+              name: true,
+            },
+          },
+          supplier: {
+            select: {
+              name: true,
+            },
+          },
+        },
         orderBy: {
           createdAt: 'desc',
         },
@@ -52,80 +89,124 @@ export class ProductService {
 
       return {
         success: true,
-        message: 'product fetched successfully',
+        message: 'Products fetched successfully',
         data: products,
       };
     } catch (error) {
-      this.logger.error(error);
+      console.error(error);
       throw error;
     }
   }
 
-  //get product by id
-  async getProductById(id: number): Promise<ProductFormatResponseType> {
+  // Get product by ID
+  async getProductById(
+    id: number,
+  ): Promise<ApiResponseType<ProductFormatResponseType>> {
     try {
       const product = await this.databaseService.product.findUnique({
         where: {
           id,
         },
+        include: {
+          category: true,
+        },
       });
+
       if (!product) {
         throw new NotFoundException('Product not found');
       }
-      return product;
+
+      return {
+        success: true,
+        message: 'Product fetched successfully',
+        data: product,
+      };
     } catch (error) {
-      this.logger.error(error);
+      console.error(error);
       throw error;
     }
   }
 
-  //update product by id
-  async updateProduct(id: number, data: UpdateProductDto) {
+  // Update product by ID
+  async updateProduct(
+    id: number,
+    data: UpdateProductDto,
+  ): Promise<ApiResponseType<ProductFormatResponseType>> {
     try {
-      const product = await this.databaseService.product.findUnique({
+      // Check if product exists
+      const existingProduct = await this.databaseService.product.findUnique({
         where: {
           id,
         },
       });
-      if (!product) {
-        throw new ConflictException('Product not found');
+
+      if (!existingProduct) {
+        throw new NotFoundException('Product not found');
       }
-      await this.databaseService.product.update({
+
+      // If SKU is being changed, check duplicate SKU
+      if (data.sku && data.sku !== existingProduct.sku) {
+        const skuExists = await this.databaseService.product.findUnique({
+          where: {
+            sku: data.sku,
+          },
+        });
+
+        if (skuExists) {
+          throw new ConflictException(
+            'Product with the same SKU already exists',
+          );
+        }
+      }
+
+      const product = await this.databaseService.product.update({
         where: {
           id,
         },
         data,
+        include: {
+          category: true,
+        },
       });
 
       return {
+        success: true,
         message: 'Product updated successfully',
-        data,
+        data: product,
       };
     } catch (error) {
-      this.logger.error(error);
+      console.error(error);
       throw error;
     }
   }
 
-  //delete product by id
-  async deleteProduct(id: number) {
+  // Delete product by ID
+  async deleteProduct(id: number): Promise<ApiResponseType<null>> {
     try {
-      const product = await this.databaseService.product.findUnique({
+      // Check if product exists
+      const existingProduct = await this.databaseService.product.findUnique({
         where: {
           id,
         },
       });
-      if (!product) {
-        throw new ConflictException('Product not found');
+
+      if (!existingProduct) {
+        throw new NotFoundException('Product not found');
       }
+
       await this.databaseService.product.delete({
         where: {
           id,
         },
       });
-      return product;
+
+      return {
+        success: true,
+        message: 'Product deleted successfully',
+        data: null,
+      };
     } catch (error) {
-      this.logger.error(error);
+      console.error(error);
       throw error;
     }
   }

@@ -5,7 +5,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output = "../generated/prisma"
 }
 
 datasource db {
@@ -14,12 +14,36 @@ datasource db {
 }
 
 
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 model Product {
-  id          Int  @id @default(autoincrement())
-  name        String 
-  sku         String @unique
-  price       Int 
-  quantity    Int 
+  id          Int      @id @default(autoincrement())
+  name        String
+  sku         String   @unique
+  price       Int
+  quantity    Int
+
+  category_id  Int
+  category     Category @relation(fields: [category_id], references: [id])
+
+  supplier_id   Int?
+  supplier      Supplier? @relation(fields: [supplier_id], references: [id])
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-} 
+}
+
+model Supplier{
+  id   Int @id @default(autoincrement())
+  name  String
+  email  String @unique
+  products Product[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
