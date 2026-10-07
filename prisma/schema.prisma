@@ -1,49 +1,42 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
-  output = "../generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
-  // url  = env("DATABASE_URL")
 }
 
-
-model Category {
+model category {
   id        Int       @id @default(autoincrement())
   name      String
-  products  Product[]
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime
+  product   product[]
 }
 
-model Product {
-  id          Int      @id @default(autoincrement())
+model product {
+  id          Int       @id @default(autoincrement())
   name        String
-  sku         String   @unique
+  sku         String    @unique(map: "Product_sku_key")
   price       Int
   quantity    Int
+  category_id Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  supplier_id Int?
+  category    category  @relation(fields: [category_id], references: [id], map: "Product_category_id_fkey")
+  supplier    supplier? @relation(fields: [supplier_id], references: [id], map: "Product_supplier_id_fkey")
 
-  category_id  Int
-  category     Category @relation(fields: [category_id], references: [id])
-
-  supplier_id   Int?
-  supplier      Supplier? @relation(fields: [supplier_id], references: [id])
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  @@index([category_id], map: "Product_category_id_fkey")
+  @@index([supplier_id], map: "Product_supplier_id_fkey")
 }
 
-model Supplier{
-  id   Int @id @default(autoincrement())
-  name  String
-  email  String @unique
-  products Product[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model supplier {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique(map: "Supplier_email_key")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  product   product[]
 }

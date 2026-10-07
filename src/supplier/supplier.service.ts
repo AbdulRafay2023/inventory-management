@@ -6,43 +6,38 @@ import { CreateSupplierDto } from './dto/create-supplier.dto';
 export class SupplierService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  // create supplier
-  async createSupplier(data: CreateSupplierDto) {
-    if (data.email) {
-      const existingSupplier = await this.databaseService.supplier.findUnique({
-        where: {
-          email: data.email,
-        },
-      });
+  // async createSupplier(data: CreateSupplierDto) {
+  //   const existingSupplier = await this.databaseService.supplier.findUnique({
+  //     where: {
+  //       email: data.email,
+  //     },
+  //   });
 
-      if (existingSupplier) {
-        throw new ConflictException('Supplier email already exist');
-      }
-    }
+  //   if (existingSupplier) {
+  //     throw new ConflictException('Supplier email already exists');
+  //   }
 
-    return this.databaseService.supplier.create({
-      data,
-    });
-  }
+  //   return this.databaseService.supplier.create({
+  //     data,
+  //   });
+  // }
 
-  // get all suppliers
-  async getAllSuppliers() {
-    return this.databaseService.supplier.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-  }
+  // async getAllSuppliers() {
+  //   return this.databaseService.supplier.findMany({
+  //     orderBy: {
+  //       createdAt: 'desc',
+  //     },
+  //   });
+  // }
 
-  // get supplier by id
-  async getSupplierById(id: number) {
-    return this.databaseService.supplier.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        products: true,
-      },
-    });
-  }
+  // async getSupplierById(id: number) {
+  //   return this.databaseService.supplier.findUnique({
+  //     where: {
+  //       id,
+  //     },
+  //     include: {
+  //       product: true,
+  //     },
+  //   });
+  // }
 }

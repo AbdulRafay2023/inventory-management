@@ -7,20 +7,20 @@ export class SupplierController {
   constructor(private readonly SupplierService: SupplierService) {}
 
   //Create Supplier
-  @Post()
-  createSupplier(@Body() data: CreateSupplierDto) {
-    return this.SupplierService.createSupplier(data);
-  }
+  // @Post()
+  // createSupplier(@Body() data: CreateSupplierDto) {
+  //   return this.SupplierService.createSupplier(data);
+  // }
 
-  //get all suppliers
-  @Get()
-  getAllSuppliers() {
-    return this.SupplierService.getAllSuppliers();
-  }
+  // //get all suppliers
+  // @Get()
+  // getAllSuppliers() {
+  //   return this.SupplierService.getAllSuppliers();
+  // }
 
-  //get supplier by id
-  @Get(':id')
-  getSupplierById(@Param('id') id: number) {
-    return this.SupplierService.getSupplierById(id);
-  }
+  // //get supplier by id
+  // @Get(':id')
+  // getSupplierById(@Param('id') id: number) {
+  //   return this.SupplierService.getSupplierById(id);
+  // }
 }

@@ -7,7 +7,6 @@ export class DatabaseService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  supplier: any;
   constructor() {
     const adapter = new PrismaMariaDb({
       host: process.env.DB_HOST,
