@@ -10,6 +10,7 @@ import { ProductFormatResponseType } from './types';
 import { ApiResponseType } from './types/api-response.type';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductQueryDto } from './dto/product-query.dto';
 
 @Injectable()
 export class ProductService {
@@ -65,9 +66,9 @@ export class ProductService {
   }
 
   // Get all products
-  async getAllProducts(): Promise<
-    ApiResponseType<ProductFormatResponseType[]>
-  > {
+  async getAllProducts(
+    query: ProductQueryDto,
+  ): Promise<ApiResponseType<ProductFormatResponseType[]>> {
     try {
       const products = await this.databaseService.product.findMany({
         include: {

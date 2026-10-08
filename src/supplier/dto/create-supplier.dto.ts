@@ -5,7 +5,7 @@ export class CreateSupplierDto {
   @IsNotEmpty()
   name: string;
 
-  @IsOptional()
   @IsEmail()
+  @IsOptional()
   email?: string;
 }

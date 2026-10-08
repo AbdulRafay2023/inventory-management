@@ -6,10 +6,12 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductQueryDto } from './dto/product-query.dto';
 
 @Controller('product')
 export class ProductController {
@@ -22,8 +24,8 @@ export class ProductController {
 
   //get all products
   @Get()
-  getAllProducts() {
-    return this.productService.getAllProducts();
+  getAllProducts(@Query() query: ProductQueryDto) {
+    return this.productService.getAllProducts(query);
   }
 
   //get product by id

@@ -4,40 +4,28 @@ import { CreateSupplierDto } from './dto/create-supplier.dto';
 
 @Injectable()
 export class SupplierService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaservice: DatabaseService) {}
 
+  //create supplier
   // async createSupplier(data: CreateSupplierDto) {
-  //   const existingSupplier = await this.databaseService.supplier.findUnique({
-  //     where: {
-  //       email: data.email,
-  //     },
-  //   });
+  //   if (data.email) {
+  //     const existingSupplier = await this.databaservice.supplier.findUnique({
+  //       where: {
+  //         email: data.email,
+  //       },
+  //     });
 
-  //   if (existingSupplier) {
-  //     throw new ConflictException('Supplier email already exists');
+  //     if (existingSupplier) {
+  //       throw new ConflictException('Supplier email already exist');
+  //     }
   //   }
 
-  //   return this.databaseService.supplier.create({
+  //   const supplier = await this.databaservice.supplier.create({
   //     data,
   //   });
-  // }
 
-  // async getAllSuppliers() {
-  //   return this.databaseService.supplier.findMany({
-  //     orderBy: {
-  //       createdAt: 'desc',
-  //     },
-  //   });
-  // }
-
-  // async getSupplierById(id: number) {
-  //   return this.databaseService.supplier.findUnique({
-  //     where: {
-  //       id,
-  //     },
-  //     include: {
-  //       product: true,
-  //     },
-  //   });
+  //   return {
+  //     supplier,
+  //   };
   // }
 }
